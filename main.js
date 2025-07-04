@@ -1,181 +1,151 @@
 /*************************************************************************
- *  BIRTHDAY HEDGEHOG  –  main.js
- *  © 2025   Tayla’s personal birthday surprise
+ *  Birthday Hedgehog – main.js  (rev E)
  *
- *  What this file does (high-level):
- *  ▸ show()      = simple scene switcher (add/remove .hidden)
- *  ▸ Button logic = offer → sad → fight decisions
- *  ▸ enterCake()  = loads cake scene & starts microphone listener
- *  ▸ startMicOnce = listens for a “blow” sound to extinguish candles
- *  ▸ Fight mini-game: hedgehog dashes, hero flashes red, then user loses
+ *  • scene switching, fight mini-game, microphone candle blow-out
+ *  • duel music fade in/out
+ *  • surprise card now laid out by Bootstrap grid
  *************************************************************************/
 
-/* ---------------------------------------------------------------
-   1.  Tiny DOM helpers & scene switcher
-   --------------------------------------------------------------- */
-const $  = sel => document.querySelector(sel);
-const $$ = sel => [...document.querySelectorAll(sel)];
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-/** hide EVERYTHING then reveal the requested scene */
-function show(sceneSelector) {
-  $$('.scene').forEach(s => s.classList.add('hidden'));
-  $(sceneSelector).classList.remove('hidden');
+function show(sel){
+  $$('.scene').forEach(el=>el.classList.add('hidden'));
+  $(sel).classList.remove('hidden');
 }
 
-/* ---------------------------------------------------------------
-   2.  Offer / Sad – button navigation
-   --------------------------------------------------------------- */
+/* --------------------------------------------------  duel music */
+const duelAudio = $('#duel-theme');
+
+function fadePlayDuel(){
+  if(!duelAudio) return;
+  duelAudio.currentTime = 0;
+  duelAudio.volume = 0;
+  duelAudio.play();
+  let v = 0;
+  const id = setInterval(()=>{ v+=.05; duelAudio.volume=Math.min(v,1);
+                               if(v>=1) clearInterval(id); },40);
+}
+function fadeStopDuel(){
+  if(!duelAudio||duelAudio.paused) return;
+  let v = duelAudio.volume;
+  const id = setInterval(()=>{ v-=.05; duelAudio.volume=Math.max(v,0);
+                               if(v<=0){ duelAudio.pause(); clearInterval(id);} },40);
+}
+
+/* --------------------------------------------------  buttons */
 $('#offer-yes').addEventListener('click', enterCake);
-$('#offer-no' ).addEventListener('click', () => show('#scene-sad'));
+$('#offer-no' ).addEventListener('click',()=>show('#scene-sad'));
 
 $('#sad-fine').addEventListener('click', enterCake);
-$('#sad-no'  ).addEventListener('click', () => show('#scene-fight'));
-
-/* ---------------------------------------------------------------
-   3.  Fight mini-game
-   --------------------------------------------------------------- */
-$('#fight-btn').addEventListener('click', e => {
-  const btn   = e.currentTarget;
-  const hero  = document.querySelector('#scene-fight .hero');
-  const hedgy = document.querySelector('#scene-fight .hedgie');
-
-  btn.disabled    = true;
-  btn.textContent = '…duelling';
-
-  /* Hedgehog dashes left */
-  hedgy.style.transition = 'transform 0.6s ease';
-  hedgy.style.transform  = 'translateX(-120%)';
-
-  /* 0.6 s later hero flashes red */
-  setTimeout(() => hero.classList.add('hurt'), 600);
-
-  /* Finish duel, reset sprites, move on to cake */
-  setTimeout(() => {
-    btn.textContent = 'You lost! 😝';
-    hedgy.style.transform = '';      // snap back right
-    setTimeout(enterCake, 1500);
-  }, 1100);                          // 0.6 dash + 0.5 pause
+$('#sad-no'  ).addEventListener('click',()=>{
+  show('#scene-fight');
+  fadePlayDuel();
 });
 
-/* ---------------------------------------------------------------
-   4.  Cake scene – start microphone once
-   --------------------------------------------------------------- */
-function enterCake() {
+/* --------------------------------------------------  fight */
+$('#fight-btn').addEventListener('click',e=>{
+  const btn=e.currentTarget,
+        hero=$('#scene-fight .hero'),
+        hedgy=$('#scene-fight .hedgie');
+  btn.disabled=true; btn.textContent='…duelling';
+
+  hedgy.style.transition='transform .6s ease';
+  hedgy.style.transform='translateX(-120%)';
+  setTimeout(()=>hero.classList.add('hurt'),600);
+
+  setTimeout(()=>{
+    btn.textContent='You lost! 😝';
+    hedgy.style.transform='';
+    setTimeout(enterCake,1500);
+  },1100);
+});
+
+/* --------------------------------------------------  cake + mic */
+let micStarted=false;
+function enterCake(){
+  fadeStopDuel();
   show('#scene-cake');
   startMicOnce();
 }
+function startMicOnce(){
+  if(micStarted) return;
+  micStarted=true;
 
-let micStarted = false;   // guard so we don’t re-init the mic
-function startMicOnce() {
-  if (micStarted) return;
-  micStarted = true;
+  const flames   = $$('.candle'),
+        cakeMsg  = $('#cake-wrapper .msg'),
+        cakeWrap = $('#cake-wrapper'),
+        surprise = $('#surprise');
 
-  /* Fast DOM lookups */
-  const flames   = $$('.candle');                 // five candle divs
-  const cakeMsg  = $('#cake-wrapper .msg');       // status <p>
-  const surprise = $('#surprise');                // hidden goodies
-  const cakeWrap = $('#cake-wrapper');            // cake + prompt
-
-  /** Browser blocked audio? Give a fallback */
-  if (!navigator.mediaDevices) {
-    cakeMsg.textContent = '🎤 Mic unavailable (HTTPS needed)';
+  if(!navigator.mediaDevices){
+    cakeMsg.textContent='🎤 Mic unavailable (HTTPS needed)';
     return;
   }
 
-  /* 1. Get mic stream (audio only) */
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      /* 2. Pipe mic → analyser → read RMS loudness */
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const mic = ctx.createMediaStreamSource(stream);
-      const ana = ctx.createAnalyser();
-      ana.fftSize = 256;
-      mic.connect(ana);
+  navigator.mediaDevices.getUserMedia({audio:true})
+    .then(async stream=>{
+      const ctx=new (window.AudioContext||window.webkitAudioContext)();
+      if(ctx.state==='suspended'){ try{await ctx.resume();}catch{} }
 
-      const data = new Uint8Array(ana.frequencyBinCount);
+      const mic=ctx.createMediaStreamSource(stream),
+            ana=ctx.createAnalyser();
+      ana.fftSize=256; mic.connect(ana);
 
-      /* 3. Loop until loud “blow” detected */
-      (function listen() {
+      const data=new Uint8Array(ana.frequencyBinCount);
+      let loud=0;
+      const THRESH=.15, NEED=4;
+
+      (function loop(){
         ana.getByteTimeDomainData(data);
+        let sum=0; data.forEach(v=>{ const n=(v-128)/128; sum+=n*n; });
+        const rms=Math.sqrt(sum/data.length);
 
-        /* Root-mean-square of waveform ≈ loudness (0-1) */
-        let sum = 0;
-        data.forEach(v => {
-          const n = (v - 128) / 128; 
-          sum += n * n;
-        });
-        const rms = Math.sqrt(sum / data.length);
-
-        if (rms > 0.25) {             // ✨ Threshold tweak here
-          /* 4. SUCCESS - extinguish flames & reveal surprise */
-          flames.forEach(c => c.classList.add('blown-out'));
-          cakeMsg.textContent = '🎉 Candles out!';
-
-          /* Stop mic to save battery / privacy */
-          stream.getTracks().forEach(t => t.stop());
-          ctx.close();
-
-          /* Hide cake, then show gallery */
-          setTimeout(() => {
-            cakeWrap.classList.add('hidden');
-            surprise.classList.remove('hidden');
-          }, 1000);
-        } else {
-          requestAnimationFrame(listen);  // keep listening
-        }
+        if(rms>THRESH){ if(++loud>=NEED) extinguish(); else requestAnimationFrame(loop);}
+        else{ loud=0; requestAnimationFrame(loop);}
       })();
+
+      function extinguish(){
+        flames.forEach(f=>f.classList.add('blown-out'));
+        cakeMsg.textContent='🎉 Candles out!';
+        stream.getTracks().forEach(t=>t.stop()); ctx.close();
+
+        setTimeout(()=>{
+          cakeWrap.classList.add('hidden');     // hide cake
+          surprise.classList.remove('hidden');  // show Bootstrap grid
+          surprise.scrollIntoView({behavior:'smooth',block:'start'});
+        },600);
+      }
     })
-    .catch(err => {
-      console.error('Mic error', err);
-      cakeMsg.textContent = '🎤 Enable mic in browser bar ↑';
+    .catch(err=>{
+      console.error('mic error',err);
+      cakeMsg.textContent='🎤 Enable mic in browser bar ↑';
     });
 }
 
+/* --------------------------------------------------  hearts (unchanged) */
+function spawnHearts(sceneSel,n,src){
+  const scene=$(sceneSel),
+        wrap=document.createElement('div');
+  wrap.className='hearts'; scene.prepend(wrap);
 
-/* ---------------------------------------------------------------
-   FLOATING HEARTS / ANY SPRITE  ❤️💔✨
-   sceneSel  – CSS selector for the scene section
-   count     – how many sprites to spawn
-   imgSrc    – path to the PNG/GIF you want to float
-   --------------------------------------------------------------- */
-function spawnHearts(sceneSel, count, imgSrc) {
-  const scene     = document.querySelector(sceneSel);
-  const container = document.createElement('div');
-  container.className = 'hearts';
-  scene.prepend(container);          // puts hearts behind content
-
-  for (let i = 0; i < count; i++) {
-    const h   = document.createElement('img');
-    h.src     = imgSrc;              // 🖼 any sprite you like
-    h.className = 'heart';
-
-    /* Random size, position, speed, delay for natural feel */
-    const size = Math.random() * 20 + 16;          // 16–36 px
-    h.style.width            = `${size}px`;
-    h.style.left             = `${Math.random() * 100}%`;
-    h.style.animationDelay    = `${Math.random() * 8}s`;
-    h.style.animationDuration = `${8 + Math.random() * 6}s`;
-
-    container.appendChild(h);
+  for(let i=0;i<n;i++){
+    const h=document.createElement('img');
+    h.src=src; h.className='heart';
+    const size=Math.random()*20+16;
+    h.style.width=`${size}px`;
+    h.style.left =`${Math.random()*100}%`;
+    h.style.animationDelay   =`${Math.random()*8}s`;
+    h.style.animationDuration=`${8+Math.random()*6}s`;
+    wrap.appendChild(h);
   }
 }
+spawnHearts('#scene-offer',12,'img/pixel-heart.png');
+spawnHearts('#scene-sad',  18,'img/pixel-brokenheart.png');
+spawnHearts('#scene-cake', 15,'img/pixel-heart.png');
+spawnHearts('#scene-cake', 10,'img/pixel-balloon.png');
+spawnHearts('#scene-cake', 10,'img/pixel-balloon2.png');
+spawnHearts('#scene-cake', 10,'img/pixel-balloon3.png');
+spawnHearts('#scene-cake', 10,'img/pixel-balloon4.png');
 
-// 12 normal hearts in the OFFER scene
-spawnHearts('#scene-offer', 12, 'img/pixel-heart.png');
-
-// 18 BROKEN hearts in the SAD scene
-spawnHearts('#scene-sad', 18, 'img/pixel-brokenheart.png');
-
-// 15 hearts in the CAKE scene
-spawnHearts('#scene-cake', 15, 'img/pixel-heart.png');
-spawnHearts('#scene-cake', 10, 'img/pixel-balloon.png');
-spawnHearts('#scene-cake', 10, 'img/pixel-balloon2.png');
-spawnHearts('#scene-cake', 10, 'img/pixel-balloon3.png');
-spawnHearts('#scene-cake', 10, 'img/pixel-balloon4.png');
-
-
-
-/* ---------------------------------------------------------------
-   5.  Boot sequence  – start directly at OFFER scene
-   --------------------------------------------------------------- */
+/* --------------------------------------------------  boot */
 show('#scene-offer');

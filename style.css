@@ -31,7 +31,7 @@ html, body {
   padding: 1.5rem;              /* safe breathing room */
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 /*────────────────────────────────────────────────────────────
   2.  CHARACTER SPRITES
@@ -479,4 +479,134 @@ html, body {
   10%  {                      opacity: 1; }   /* fade in */
   90%  {                      opacity: 1; }
   100% { transform: translateY(-120vh) scale(1); opacity: 0; }
+}
+
+/* ──────────────────────────────────────────────────────────
+   6.  PHOTO ROW – three thumbnails in a horizontal stack
+   ──────────────────────────────────────────────────────────*/
+.photo-row {
+  display: flex;               /* lay items side-by-side   */
+  justify-content: center;     /* centre the whole row     */
+  gap: 1rem;                   /* space between thumbnails */
+  margin-block: 1.75rem;       /* breathing room above/-below each row */
+  flex-wrap: wrap;             /* let them wrap on XS view */
+}
+
+.photo-row img {
+  width: 96px;                 /* you can tweak…           */
+  height: 96px;
+  object-fit: cover;           /* crops nicely             */
+
+}
+
+/* ──────────────────────────────────────────────────────────
+   6a.  GREETING CARD – centred white bubble
+   ──────────────────────────────────────────────────────────*/
+.greeting-card {
+  max-width: 42ch;             /* comfy reading width      */
+  margin-inline: auto;         /* centre horizontally      */
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,.1);
+  font-family: "Courier New", monospace;
+  text-align: center;
+}
+
+.greeting-card a.spotify {
+  font-weight: 600;
+  text-decoration: none;
+  color: #007b7f;
+}
+
+/* Optional: light hover colour for the Spotify link */
+.greeting-card a.spotify:hover {
+  color: #009fa3;
+}
+
+
+/* move scene content toward the top once cake is hidden */
+#scene-cake:not(.hidden) {
+  justify-content: flex-start;       /* override .scene default center */
+  padding-top: clamp(2rem,6vh,4rem); /* dynamic top margin */
+}
+
+/*────────────────────────────────────────────────────────────
+  6.  HERO  (Tayla, speech bubble, sparkle)
+  ────────────────────────────────────────────────────────────*/
+.hero-wrap{
+  position: relative;            /* anchor for absolute bubble-box   */
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-block: 2rem;
+  pointer-events: none;          /* allow only Tayla to receive clicks */
+  margin-top: 28%;               /* pulls scene down under the card   */
+}
+
+/* Tayla link + sprite */
+.tayla-link{
+  display: inline-block;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.tayla-img{
+  width: 180px;
+  opacity: 0;
+  animation: slideInRight 0.9s ease-out forwards;
+  transition: filter .25s ease;
+}
+/* Pink glow on hover / focus / active */
+.tayla-link:hover  .tayla-img,
+.tayla-link:focus  .tayla-img,
+.tayla-link:active .tayla-img{
+  filter: drop-shadow(0 0 6px hotpink);
+  transform: translateX(0) scale(1.04);
+}
+
+/* Bubble wrapper (gives real dimensions so ::after can align) */
+.bubble-box{
+  position: absolute;
+  bottom: 100%;                  /* sits above Tayla            */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 230px;                  /* match PNG width             */
+  display: inline-block;         /* shrink-wrap                 */
+  pointer-events: none;
+}
+
+/* Bubble image */
+.bubble-img{
+  width: 100%;
+  opacity: 0;
+  animation: slideDown 0.7s ease-out forwards;
+  animation-delay: 1s;
+  z-index: 2;
+  left: 23%;
+  position: absolute; 
+  margin-top: -33%;
+}
+
+/* Sparkle pseudo-element */
+.bubble-box::after{
+  content: "✨";
+  position: absolute;
+  top: -88px; right: -24px;
+  font-size: 1.75rem;
+  animation: twinkle 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Keyframes */
+@keyframes slideInRight{
+  from{ transform: translateX(120%); opacity: 0; }
+  to  { transform: translateX(0);     opacity: 1; }
+}
+@keyframes slideDown{
+  from{ transform: translateY(-120%); opacity: 0; }
+  to  { transform: translateY(0);     opacity: 1; }
+}
+@keyframes twinkle{
+  0%,100%{ opacity: 0; transform: scale(.7) rotate(-15deg); }
+  50%    { opacity: 1; transform: scale(1)  rotate( 5deg); }
 }
