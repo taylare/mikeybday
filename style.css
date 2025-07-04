@@ -1,0 +1,482 @@
+/*────────────────────────────────────────────────────────────
+  0.  DESIGN TOKENS & GLOBAL RESET
+  ────────────────────────────────────────────────────────────*/
+:root {
+  --mint  : #c8f7d0;   /* page background */
+  --plum  : #619157;   /* accent colour   */
+  --pixel : 4px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--mint);
+  font-family: "Courier New", monospace;
+  -webkit-tap-highlight-color: transparent;   /* remove iOS flash */
+}
+
+/*────────────────────────────────────────────────────────────
+  1.  UNIVERSAL “SCENE” LAYOUT
+  ────────────────────────────────────────────────────────────*/
+.scene {
+  position: absolute;     /* fills the viewport */
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2rem);  /* flexible spacing */
+  padding: 1.5rem;              /* safe breathing room */
+}
+
+.hidden { display: none; }
+
+/*────────────────────────────────────────────────────────────
+  2.  CHARACTER SPRITES
+  ────────────────────────────────────────────────────────────*/
+.hedgie,
+.hero {
+  width: clamp(160px, 45vw, 280px);
+  height: auto;
+}
+
+.hedgie-offer, .hedgie-sad {
+    width: 300px;
+}
+
+.hedgie {
+    width: 95px;
+}
+
+/* Extra-small phones: shrink even more so they don’t stack awkwardly */
+@media (max-width: 450px) {
+  .hedgie {width: 90px; }
+  .hero { width: 195px; }
+
+  .hedgie-offer, .hedgie-sad {
+    width: 200px;
+  }
+}
+
+/* Fight-scene flash (hero turns red) */
+@keyframes hurt {
+  0%   { filter: hue-rotate(0deg)   brightness(1); }
+  50%  { filter: hue-rotate(-40deg) brightness(1.6); }
+  100% { filter: hue-rotate(0deg)   brightness(1); }
+}
+.hero.hurt { animation: hurt 0.5s ease; }
+
+/*────────────────────────────────────────────────────────────
+  3.  PIXEL SPEECH BUBBLE
+  ────────────────────────────────────────────────────────────*/
+.bubble {
+  position: relative;
+  background: #fff;
+  padding: 1rem 1.4rem;
+  max-width: 90vw;
+  text-align: center;
+  line-height: 1.35;
+  font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+
+}
+
+/* ░░ STEPPED CORNERS ░░–––––––––––––––––––––––––––––––––––––––––– */
+.bubble,
+.bubble--wrapper {
+  clip-path: polygon(0px calc(100% - 12px),
+    3px calc(100% - 12px),
+    3px calc(100% - 6px),
+    6px calc(100% - 6px),
+    6px calc(100% - 3px),
+    12px calc(100% - 3px),
+    12px 100%,
+    calc(100% - 12px) 100%,
+    calc(100% - 12px) calc(100% - 3px),
+    calc(100% - 6px) calc(100% - 3px),
+    calc(100% - 6px) calc(100% - 6px),
+    calc(100% - 3px) calc(100% - 6px),
+    calc(100% - 3px) calc(100% - 12px),
+    100% calc(100% - 12px),
+    100% 12px,
+    calc(100% - 3px) 12px,
+    calc(100% - 3px) 6px,
+    calc(100% - 6px) 6px,
+    calc(100% - 6px) 3px,
+    calc(100% - 12px) 3px,
+    calc(100% - 12px) 0px,
+    12px 0px,
+    12px 3px,
+    6px 3px,
+    6px 6px,
+    3px 6px,
+    3px 12px,
+    0px 12px);
+  position: relative;
+}
+.bubble {
+  border: 6px solid transparent;
+}
+.bubble--wrapper {
+  width: fit-content;
+  height: fit-content;
+}
+.bubble--wrapper .bubble {
+  display: block;
+  clip-path: polygon(6px 15px,
+    9px 15px,
+    9px 9px,
+    15px 9px,
+    15px 6px,
+    calc(100% - 15px) 6px,
+    calc(100% - 15px) 9px,
+    calc(100% - 9px) 9px,
+    calc(100% - 9px) 15px,
+    calc(100% - 6px) 15px,
+    calc(100% - 6px) calc(100% - 15px),
+    calc(100% - 9px) calc(100% - 15px),
+    calc(100% - 9px) calc(100% - 9px),
+    calc(100% - 15px) calc(100% - 9px),
+    calc(100% - 15px) calc(100% - 6px),
+    15px calc(100% - 6px),
+    15px calc(100% - 9px),
+    9px calc(100% - 9px),
+    9px calc(100% - 15px),
+    6px calc(100% - 15px));
+}
+.bubble::after,
+.bubble--wrapper::after {
+  content: "";
+  position: absolute;
+  clip-path: polygon(0px calc(100% - 12px),
+    3px calc(100% - 12px),
+    3px calc(100% - 6px),
+    6px calc(100% - 6px),
+    6px calc(100% - 3px),
+    12px calc(100% - 3px),
+    12px 100%,
+    calc(100% - 12px) 100%,
+    calc(100% - 12px) calc(100% - 3px),
+    calc(100% - 6px) calc(100% - 3px),
+    calc(100% - 6px) calc(100% - 6px),
+    calc(100% - 3px) calc(100% - 6px),
+    calc(100% - 3px) calc(100% - 12px),
+    100% calc(100% - 12px),
+    100% 12px,
+    calc(100% - 3px) 12px,
+    calc(100% - 3px) 6px,
+    calc(100% - 6px) 6px,
+    calc(100% - 6px) 3px,
+    calc(100% - 12px) 3px,
+    calc(100% - 12px) 0px,
+    12px 0px,
+    12px 3px,
+    6px 3px,
+    6px 6px,
+    3px 6px,
+    3px 12px,
+    0px 12px,
+    0px 50%,
+    6px 50%,
+    6px 15px,
+    9px 15px,
+    9px 9px,
+    15px 9px,
+    15px 6px,
+    calc(100% - 15px) 6px,
+    calc(100% - 15px) 9px,
+    calc(100% - 9px) 9px,
+    calc(100% - 9px) 15px,
+    calc(100% - 6px) 15px,
+    calc(100% - 6px) calc(100% - 15px),
+    calc(100% - 9px) calc(100% - 15px),
+    calc(100% - 9px) calc(100% - 9px),
+    calc(100% - 15px) calc(100% - 9px),
+    calc(100% - 15px) calc(100% - 6px),
+    15px calc(100% - 6px),
+    15px calc(100% - 9px),
+    9px calc(100% - 9px),
+    9px calc(100% - 15px),
+    6px calc(100% - 15px),
+    6px 50%,
+    0px 50%);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000000;
+  display: block;
+  pointer-events: none;
+}
+.bubble::after {
+  margin: -6px;
+}
+
+/* Floaty bobbing motion */
+@keyframes floaty {
+  from { transform: translateY(-2px); }
+  to   { transform: translateY( 4px); }
+}
+.bubble.floating {
+  animation: floaty 0.8s ease-in-out infinite alternate;
+}
+
+/* Hedgehog “rises” smoothly when scene loads */
+@keyframes rise {
+  from { transform: translateY(-80px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.hedgie-offer { animation: rise 1.2s ease-out both; }
+
+/*────────────────────────────────────────────────────────────
+  4.  CAKE + CANDLES
+  ────────────────────────────────────────────────────────────*/
+#cake-wrapper { display: flex; flex-direction: column; align-items: center; }
+
+.cake {
+  position: relative;
+  width: clamp(200px, 65vw, 340px); 
+  margin: 0 auto;
+}
+
+.cake-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.candles {
+  position: absolute;
+  top: -64px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Adjust the circle radius so the candles hit the frosting ring */
+:root {
+  --radius: 50px;  
+}
+
+.candle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform:
+    rotate(var(--angle))
+    translateY(calc(-1 * var(--radius)))
+    rotate(calc(-1 * var(--angle)));
+
+  width: 8px;
+  height: 22px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.flame {
+  position: absolute;
+  left: 50%; top: -12px;
+  width: 8px; height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 75%, #ffa500 0%, #ff4500 60%, transparent 70%);
+  animation: flicker 0.25s infinite alternate;
+}
+
+@keyframes flicker {
+  from { transform: translate(-50%, 0) scale(1); }
+  to   { transform: translate(-50%, 1px) scale(1.1); }
+}
+
+
+.flame {
+  position: absolute;
+  left: 50%; top: -12px;
+  width: 8px; height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 75%,
+              #ffa500 0%, #ff4500 60%, transparent 70%);
+  animation: flicker 0.25s infinite alternate;
+}
+
+/* Flames disappear once mic detects a loud “blow” */
+.blown-out .flame { display: none; }
+
+@keyframes flicker {
+  from { transform: translate(-50%, 0)   scale(1);   }
+  to   { transform: translate(-50%, 1px) scale(1.1); }
+}
+
+/* Status message under cake */
+.msg {
+  margin-top: 0.45rem;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  color: var(--plum);
+}
+
+/*────────────────────────────────────────────────────────────
+  4B.  MOBILE-FIRST PER-CANDLE OFFSETS
+────────────────────────────────────────────────────────────*/
+#candle1  { --angle:  0deg;  top: 54%; }
+#candle2  { --angle: 40deg;  top: 52%; }
+#candle3  { --angle: 70deg;  left: 144px; }
+#candle4  { --angle:100deg;  left: 156px; }
+#candle5  { --angle:120deg;  left: 148px; top: 135px; }
+#candle6  { --angle:160deg;  left: 143px; top: 126px; }
+#candle7  { --angle:200deg;  left: 146px; }
+#candle8  { --angle:240deg;  left: 141px; top: 144px; }
+#candle9  { --angle:280deg;  left: 118px; top: 167px; }
+#candle10 { --angle:320deg;  left: 128px; top: 128px; }
+#candle11 { --angle: 80deg;  left:  20px; top: 111px; }
+#candle12 { --angle: 80deg;  left:   0px; top: 132px; }
+#candle13 { --angle: 80deg;  left:   0px; top: 154px; }
+
+
+
+/*────────────────────────────────────────────────────────────
+  4B.  IPAD/DESKTOP OVERRIDES FOR MANUAL POSITIONING
+────────────────────────────────────────────────────────────*/
+@media (min-width: 500px) and (max-width: 3000px) {
+  #candle1  { top: 45% !important; }
+  #candle2  { top: 43% !important; left: 176px !important; }
+  #candle3  { --angle: 54deg !important; left: 204px !important; top: 155px !important; }
+  #candle4  { left: 224px !important; top: 145px !important; }
+  #candle5  { left: 229px !important; top: 161px !important; }
+  #candle6  { left: 218px !important; top: 156px !important; }
+  #candle7  { left: 196px !important; }
+  #candle8  { left: 177px !important; top: 186px !important; }
+  #candle9  { left: 141px !important; top: 206px !important; }
+  #candle10 { left: 100px !important; top: 208px !important; }
+  #candle11 { left: 32px !important; top: 140px !important; }
+  #candle12 { left: 61px !important; top: 118px !important; }
+  #candle13 { left: 89px !important; top: 114px !important; }
+}
+
+/*────────────────────────────────────────────────────────────
+  4C.  iPhone-14 family 
+────────────────────────────────────────────────────────────*/
+@media (min-width: 430px) and (max-width: 490px) {
+
+  /* pull the whole ring down a touch so it’s centred */
+  #candle1 { top: 52%; }
+
+  /* shift right-hand candles further right */
+  #candle3  { left: 158px; }
+  #candle4  { left: 163px; }
+  #candle5  { left: 157px; top: 140px; }
+  #candle6  { left: 160px; top: 131px; }
+
+  /* back-right         */
+  #candle7  { left: 168px; top: 136px; }
+
+  /* bottom-right       */
+  #candle8  { left: 162px; top: 150px; }
+
+  /* bottom-centre      */
+  #candle9  { left: 135px; top: 175px; }
+
+  /* bottom-left        */
+  #candle10 { left: 112px; top: 148px; }
+
+  /* shift left-hand candles a hair right so they stay on the rim */
+  #candle11 { left:  60px; top: 110px; }
+  #candle12 { left:  12px; top: 139px; }
+  #candle13 { left:  20px; top: 160px; }
+}
+
+
+/*────────────────────────────────────────────────────────────
+  5.  SURPRISE GALLERY + CARD
+  ────────────────────────────────────────────────────────────*/
+#surprise { text-align: center; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(42%, 1fr));
+  gap: 0.8rem;
+  margin-block: 1.4rem;
+}
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Birthday card */
+.card {
+  background: #fff;
+  color: #000;
+  padding: 1.2rem 1.4rem;
+  max-width: 480px;
+  margin-inline: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 0.95rem;
+}
+
+.spotify {
+  color: var(--plum);
+  text-decoration: none;
+}
+.spotify:hover { text-decoration: underline; }
+
+
+/* ───────────────────────────────────────────────────────────────
+   CHOICE BUTTONS – Plain text style only
+   ─────────────────────────────────────────────────────────────── */
+.choices button {
+  all: unset;                      /* removes all default button styles */
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  margin: 0 0.4rem;                /* space between buttons */
+  transition: text-decoration 0.15s ease;
+}
+
+.choices button:hover {
+  text-decoration: underline;
+}
+
+.choices button:active {
+  transform: none;
+}
+
+
+/* ───────────────────────────────────────────────────────────────
+   FLOATING PIXEL HEARTS  ❤️
+   ─────────────────────────────────────────────────────────────── */
+.hearts {                       /* wrapper injected by JS */
+  position: absolute;
+  inset: 0;                     /* full-scene coverage   */
+  overflow: hidden;
+  pointer-events: none;         /* never block clicks    */
+  z-index: 0;                   /* sits *behind* hedgie & bubble */
+}
+
+.heart {                        /* every individual <img> */
+  position: absolute;
+  bottom: -32px;                /* start just below view */
+  will-change: transform, opacity;
+  animation-name: floatUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  opacity: 0;                   /* fades in after 10%    */
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0)  scale(1);   opacity: 0; }
+  10%  {                      opacity: 1; }   /* fade in */
+  90%  {                      opacity: 1; }
+  100% { transform: translateY(-120vh) scale(1); opacity: 0; }
+}

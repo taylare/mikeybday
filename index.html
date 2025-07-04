@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- Ensure mobile devices don’t zoom or side-scroll -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>🦔 Birthday Hedgehog Adventure</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!--  The entire adventure lives inside #stage;   -->
+  <!--  we “change scenes” by hiding / showing <section>s. -->
+  <main id="stage">
+
+    <!-- 1️⃣  OFFER – this is now the *first* scene ------------------->
+    <!-- The hedgehog gently “rises” via CSS animation.               -->
+    <section id="scene-offer" class="scene">
+      <img  class="hedgie-offer"
+            src="img/hedgehog-offer.png"
+            alt="Happy hedgehog holding a cake">
+
+      <!-- .bubble.floating bobbles up & down forever -->
+      <div class="bubble floating">
+        <p>This hedgehog has brought you a cake!<br>
+           Would you like to blow out the candles?</p>
+        <div class="choices">
+          <button id="offer-yes" type="button">yes</button>
+          <button id="offer-no"  type="button">no</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2️⃣  SAD – user declined once -------------------------------->
+    <section id="scene-sad" class="scene hidden">
+      <img class="hedgie-sad" src="img/hedgie_sad.png" alt="Sad hedgehog crying">
+
+      <div class="bubble floating">
+        <p>You’ve made the hedgehog very sad…<br>reconsider?</p>
+        <div class="choices">
+          <button id="sad-fine" type="button">fine</button>
+          <button id="sad-no"   type="button">no</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3️⃣  FIGHT – user declined twice ----------------------------->
+    <section id="scene-fight" class="scene hidden">
+      <div class="bubble floating">
+        <p>The hedgehog is now <strong>mad</strong> and challenges you to a duel!<br>
+           If you lose you must blow out the birthday candles.</p>
+        <div class="choices">
+          <button id="fight-btn" type="button">fight!</button>
+        </div>
+      </div>
+
+      <!-- Hero + hedgehog sprites (shrunk further in mobile CSS) -->
+      <div class="fighters">
+        <img class="hero"   src="img/hero.png"         alt="Pixel hero">
+        <img class="hedgie" src="img/hedgie_angry.png" alt="Angry hedgehog">
+      </div>
+    </section>
+
+    <!-- 4️⃣  CAKE + SURPRISE  --------------------------------------->
+    <section id="scene-cake" class="scene hidden">
+
+      <!-- 4A • Cake with lit candles & audio-blow prompt -->
+      <div id="cake-wrapper">
+        <div class="cake">
+            <img src="img/cake.png" alt="Birthday cake" class="cake-img">
+
+            <div class="candles">
+                <div class="candle" id="candle1"><span class="flame"></span></div>
+                <div class="candle" id="candle2"><span class="flame"></span></div>
+                <div class="candle" id="candle3"><span class="flame"></span></div>
+                <div class="candle" id="candle4"><span class="flame"></span></div>
+                <div class="candle" id="candle5"><span class="flame"></span></div>
+                <div class="candle" id="candle6"><span class="flame"></span></div>
+                <div class="candle" id="candle7"><span class="flame"></span></div>
+                <div class="candle" id="candle8"><span class="flame"></span></div>
+                <div class="candle" id="candle9"><span class="flame"></span></div>
+                <div class="candle" id="candle10"><span class="flame"></span></div>
+                <div class="candle" id="candle11"><span class="flame"></span></div>
+                <div class="candle" id="candle12"><span class="flame"></span></div>
+                <div class="candle" id="candle13"><span class="flame"></span></div>
+                </div>
+
+    </div>
+
+
+        </div>
+
+        <!-- Live status text updated by JS (“Blow into your mic…”) -->
+        <p class="msg">🎤 Blow into your mic to put the candles out!</p>
+      </div>
+
+      <!-- 4B • Hidden gallery + digital card (revealed after blow) -->
+      <div id="surprise" class="hidden">
+        <h2 class="center">Happy Birthday! 🎉</h2>
+
+        <!-- Memories gallery -->
+        <div class="grid">
+          <img src="img/photo1.jpg" alt="memory 1">
+          <img src="img/photo2.jpg" alt="memory 2">
+          <img src="img/photo3.jpg" alt="memory 3">
+          <img src="img/photo4.jpg" alt="memory 4">
+          <img src="img/photo5.jpg" alt="memory 5">
+          <img src="img/photo6.jpg" alt="memory 6">
+        </div>
+
+        <!-- Personal birthday card -->
+        <article class="card">
+          <p>To my favourite person – here’s to another wonderful year together!</p>
+          <p>
+            <a class="spotify" href="https://open.spotify.com/track/YourSongID"
+               target="_blank" rel="noopener">🎵 Play our song on Spotify</a>
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- 🔊  Only needed for the fight-scene skid SFX                 -->
+  <audio id="stop-audio" src="audio/stop.mp3" preload="auto"></audio>
+
+  <script src="main.js"></script>
+</body>
+</html>
