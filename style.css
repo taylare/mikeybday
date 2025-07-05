@@ -318,6 +318,13 @@ html, body {
   color: var(--plum);
 }
 
+
+@media (max-width: 450px) {
+#cake-wrapper {
+    margin-top: 51%;
+}
+
+}
 /*────────────────────────────────────────────────────────────
   4B.  MOBILE-FIRST PER-CANDLE OFFSETS
 ────────────────────────────────────────────────────────────*/
@@ -423,6 +430,7 @@ html, body {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   font-size: 0.95rem;
+  z-index: 1000;
 }
 
 .spotify {
@@ -490,14 +498,13 @@ html, body {
   gap: 1rem;                   /* space between thumbnails */
   margin-block: 1.75rem;       /* breathing room above/-below each row */
   flex-wrap: wrap;             /* let them wrap on XS view */
-  z-index: 1000;
   position: relative;
 }
 
 .photo-row img {
-  width: 96px;                 /* you can tweak…           */
-  height: 96px;
-  object-fit: cover;           /* crops nicely             */
+    width: 100px;
+    height: 100px;
+    object-fit: cover;         
 
 }
 
@@ -521,10 +528,13 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,.1);
   font-family: "Courier New", monospace;
   text-align: center;
+  z-index: 1000;
 }
 
 article.greeting-card {
     margin-top: -5%;
+    z-index: 1000;
+    position: relative;
 }
 
 .greeting-card a.spotify {
@@ -555,7 +565,7 @@ article.greeting-card {
   align-items: flex-end;
   margin-block: 2rem;
   pointer-events: none;          /* allow only Tayla to receive clicks */
-  margin-top: 22%;               /* pulls scene down under the card   */
+  margin-top: 25%;               /* pulls scene down under the card   */
 }
 
 /* Tayla link + sprite */
@@ -598,7 +608,7 @@ article.greeting-card {
   z-index: 2;
   left: 23%;
   position: absolute; 
-  margin-top: -33%;
+  margin-top: -32%;
 }
 
 /* Sparkle pseudo-element */
