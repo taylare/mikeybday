@@ -490,6 +490,8 @@ html, body {
   gap: 1rem;                   /* space between thumbnails */
   margin-block: 1.75rem;       /* breathing room above/-below each row */
   flex-wrap: wrap;             /* let them wrap on XS view */
+  z-index: 1000;
+  position: relative;
 }
 
 .photo-row img {
@@ -497,6 +499,14 @@ html, body {
   height: 96px;
   object-fit: cover;           /* crops nicely             */
 
+}
+
+.photo-row.bottom-photos {
+    margin-top: -11%;
+}
+
+.photo-row.top-photos {
+    margin-top: -7%;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -511,6 +521,10 @@ html, body {
   box-shadow: 0 4px 8px rgba(0,0,0,.1);
   font-family: "Courier New", monospace;
   text-align: center;
+}
+
+article.greeting-card {
+    margin-top: -5%;
 }
 
 .greeting-card a.spotify {
@@ -541,7 +555,7 @@ html, body {
   align-items: flex-end;
   margin-block: 2rem;
   pointer-events: none;          /* allow only Tayla to receive clicks */
-  margin-top: 28%;               /* pulls scene down under the card   */
+  margin-top: 22%;               /* pulls scene down under the card   */
 }
 
 /* Tayla link + sprite */
@@ -595,6 +609,7 @@ html, body {
   font-size: 1.75rem;
   animation: twinkle 1.8s ease-in-out infinite;
   pointer-events: none;
+  z-index: 1000;
 }
 
 /* Keyframes */
