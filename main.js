@@ -51,13 +51,13 @@ $('#fight-btn').addEventListener('click',e=>{
   btn.disabled=true; btn.textContent='…duelling';
 
   hedgy.style.transition='transform .6s ease';
-  hedgy.style.transform='translateX(-120%)';
+  hedgy.style.transform='translateX(-135%)';
   setTimeout(()=>hero.classList.add('hurt'),600);
 
   setTimeout(()=>{
-    btn.textContent='You lost! 😝';
+    btn.textContent='The hedgehog won sorry! 🤭';
     hedgy.style.transform='';
-    setTimeout(enterCake,1500);
+    setTimeout(enterCake, 2500);
   },1100);
 });
 

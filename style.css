@@ -38,9 +38,10 @@ html, body {
   ────────────────────────────────────────────────────────────*/
 .hedgie,
 .hero {
-  width: clamp(160px, 45vw, 280px);
+  width: clamp(160px, 45vw, 300px);
   height: auto;
 }
+
 
 .hedgie-offer, .hedgie-sad {
     width: 300px;
@@ -313,10 +314,29 @@ html, body {
 
 /* Status message under cake */
 .msg {
-  margin-top: 0.45rem;
+  margin-top: 15%;
   font-size: clamp(0.9rem, 3vw, 1rem);
   color: var(--plum);
 }
+
+/* CUTE DIAGONAL BOUNCE */
+@keyframes zigZagBounce {
+  0%   { transform: translate(0,   0)   rotate(0deg);   }
+  20%  { transform: translate(-12px,-18px) rotate(-4deg); }
+  40%  { transform: translate(  8px,-32px) rotate(3deg);  }
+  60%  { transform: translate(-10px,-18px) rotate(-3deg); }
+  80%  { transform: translate( 12px,-10px) rotate(4deg);  }
+  100% { transform: translate(0,   0)   rotate(0deg);   }
+}
+
+.msg {
+  display: inline-block;               /* keeps its own transform space   */
+  animation: zigZagBounce 2s ease-in-out infinite;
+  will-change: transform;              /* smoother on some browsers       */
+}
+
+
+
 
 
 @media (max-width: 450px) {
@@ -498,7 +518,7 @@ html, body {
   gap: 1rem;                   /* space between thumbnails */
   margin-block: 1.75rem;       /* breathing room above/-below each row */
   flex-wrap: wrap;             /* let them wrap on XS view */
-  position: relative;
+  position: static;
 }
 
 .photo-row img {
@@ -513,7 +533,7 @@ html, body {
 }
 
 .photo-row.top-photos {
-    margin-top: -7%;
+    margin-top: 5%;
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -535,6 +555,8 @@ article.greeting-card {
     margin-top: -5%;
     z-index: 1000;
     position: relative;
+    padding: 2%;
+    border: solid;
 }
 
 .greeting-card a.spotify {
