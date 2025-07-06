@@ -44,6 +44,11 @@ html, body {
   z-index: 3;
 }
 
+.hero {
+      filter: drop-shadow(0 0 2px rgb(41, 40, 41));
+    transform: translateX(0) scale(1.04);
+}
+
 
 .hedgie-offer, .hedgie-sad {
     width: 300px;
@@ -106,7 +111,6 @@ DUEL SCENE
   background:repeating-linear-gradient(45deg,
       rgba(255,255,255,.08) 0 12px,
       transparent            12px 24px);
-  animation:stripesMove 3s linear infinite;    /* drifting stripes */
   pointer-events:none;
   mix-blend-mode:overlay;                      /* lets colours show through */
 }
@@ -121,6 +125,37 @@ DUEL SCENE
   80%{transform:translate(4px,-2px)}
 }
 .scene.shake{ animation:shake .45s ease; }
+
+
+div#vs-overlay {
+    display: none;
+    
+}
+
+
+@media (max-width: 450px) {
+#vs-overlay{
+        position:absolute; top:4%; left:50%;
+        transform:translateX(-50%) translateY(-40%) scale(.4);
+        opacity:0;               /* start hidden */
+        pointer-events:none;
+        animation:vsPop .6s 1.2s forwards ease-out; /* delay 1.2 s */
+    }
+.vs-icon{ 
+    width:120px; }
+    @keyframes vsPop{
+        to{ transform:translateX(-50%) translateY(0) scale(1); opacity:1; }
+    }
+
+    .bubble.floating {
+    margin-top: 31%;
+}
+
+div#vs-overlay {
+    margin-top: 25%;
+    display:block;
+}
+}
 
 
 /*────────────────────────────────────────────────────────────
@@ -172,6 +207,7 @@ DUEL SCENE
 }
 .bubble {
   border: 6px solid transparent;
+  z-index: 4;
 }
 .bubble--wrapper {
   width: fit-content;
@@ -293,6 +329,7 @@ DUEL SCENE
   position: relative;
   width: clamp(200px, 65vw, 340px); 
   margin: 0 auto;
+  z-index: 3;
 }
 
 .cake-img {

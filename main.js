@@ -61,9 +61,9 @@ $('#fight-btn').addEventListener('click',e=>{
 
 
   setTimeout(()=>{
-    btn.textContent='The hedgehog won sorry! 🤭';
+    btn.textContent='The hedgehog has won the duel🤭';
     hedgy.style.transform='';
-    setTimeout(enterCake, 2500);
+    setTimeout(enterCake, 3000);
   },1100);
 });
 
