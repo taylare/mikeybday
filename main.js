@@ -12,6 +12,9 @@ const $$ = s => [...document.querySelectorAll(s)];
 function show(sel){
   $$('.scene').forEach(el=>el.classList.add('hidden'));
   $(sel).classList.remove('hidden');
+
+  const fight = $('#scene-fight');
+  fight.classList.toggle('duel-bg-active', sel === '#scene-fight');
 }
 
 /* --------------------------------------------------  duel music */
@@ -53,6 +56,9 @@ $('#fight-btn').addEventListener('click',e=>{
   hedgy.style.transition='transform .6s ease';
   hedgy.style.transform='translateX(-135%)';
   setTimeout(()=>hero.classList.add('hurt'),600);
+  $('#scene-fight').classList.add('shake');
+  setTimeout(()=> $('#scene-fight').classList.remove('shake'), 450);
+
 
   setTimeout(()=>{
     btn.textContent='The hedgehog won sorry! 🤭';
@@ -109,11 +115,7 @@ function startMicOnce(){
         cakeMsg.textContent='🎉 Candles out!';
         stream.getTracks().forEach(t=>t.stop()); ctx.close();
 
-        setTimeout(()=>{
-          cakeWrap.classList.add('hidden');     // hide cake
-          surprise.classList.remove('hidden');  // show Bootstrap grid
-          surprise.scrollIntoView({behavior:'smooth',block:'start'});
-        },600);
+        setTimeout(revealSurprise, 600);
       }
     })
     .catch(err=>{
@@ -121,6 +123,35 @@ function startMicOnce(){
       cakeMsg.textContent='🎤 Enable mic in browser bar ↑';
     });
 }
+
+/* ================================================================
+   Surprise scene entrance animation
+   ================================================================*/
+function revealSurprise(){
+
+  /* ➊ re-select the two DOM nodes here (they’re out of scope otherwise) */
+  const cakeWrap = $('#cake-wrapper');
+  const surprise = $('#surprise');
+
+  cakeWrap.classList.add('hidden');          // hide cake
+  surprise.classList.remove('hidden');       // show card/photos
+
+  /* ➋ fade-down each memory photo */
+  const pics = [...surprise.querySelectorAll('.memory-photo')];
+  pics.forEach((img, i) =>{
+    img.classList.add('fade-down');
+    img.style.animationDelay = `${i * 0.25}s`;
+  });
+
+  /* ➌ fade-up the greeting card */
+  const card = surprise.querySelector('.greeting-card');
+  card.classList.add('fade-up');
+  card.style.animationDelay = `${pics.length * 0.25 + 0.2}s`;
+
+  /* optional scroll */
+  surprise.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 
 /* --------------------------------------------------  hearts (unchanged) */
 function spawnHearts(sceneSel,n,src){
@@ -140,7 +171,9 @@ function spawnHearts(sceneSel,n,src){
   }
 }
 spawnHearts('#scene-offer',12,'img/pixel-heart.png');
+
 spawnHearts('#scene-sad',  18,'img/pixel-brokenheart.png');
+
 spawnHearts('#scene-cake', 15,'img/pixel-heart.png');
 spawnHearts('#scene-cake', 10,'img/pixel-balloon.png');
 spawnHearts('#scene-cake', 10,'img/pixel-balloon2.png');

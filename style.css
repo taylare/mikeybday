@@ -29,6 +29,7 @@ html, body {
   justify-content: center;
   gap: clamp(1rem, 4vw, 2rem);  /* flexible spacing */
   padding: 1.5rem;              /* safe breathing room */
+  height: 100vh;
 }
 
 .hidden { display: none !important; }
@@ -68,6 +69,73 @@ html, body {
   100% { filter: hue-rotate(0deg)   brightness(1); }
 }
 .hero.hurt { animation: hurt 0.5s ease; }
+
+/*----------------------------------------------------
+DUEL SCENE 
+-------------------------------------------------------*/
+/*────────────────────────────────────────────────────────────
+  DUEL BACKDROP – colour-cycling, scrolling stripes
+  ────────────────────────────────────────────────────────────*/
+
+/* Flash-through colours (mint → gold → red → cyan → violet) */
+@keyframes duelFlash {
+  0%   { background-color:#94c09b; }  /* mint   */
+  25%  { background-color:#ffe066; }  /* gold   */
+  50%  { background-color:#ff7070; }  /* red    */
+  75%  { background-color:#79b1c5; }  /* cyan   */
+  100% { background-color:#ae85d7; }  /* violet */
+}
+
+/* Diagonal stripes that drift sideways */
+@keyframes stripesMove {
+  to { background-position: 160px 160px; }
+}
+
+/* #scene-fight gets this class via JS  */
+.duel-bg-active{
+  animation: duelFlash 6s linear infinite;     /* colour cycle */
+  position:relative;                           /* anchor ::before */
+  overflow:hidden;
+}
+
+.duel-bg-active::before{
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(45deg,
+      rgba(255,255,255,.08) 0 12px,
+      transparent            12px 24px);
+  animation:stripesMove 3s linear infinite;    /* drifting stripes */
+  pointer-events:none;
+  mix-blend-mode:overlay;                      /* lets colours show through */
+}
+
+
+/* camera-shake when hedgie charges ----------*/
+@keyframes shake{
+  0%,100%{transform:translate(0)}
+  20%{transform:translate(-4px,2px)}
+  40%{transform:translate(3px,-3px)}
+  60%{transform:translate(-3px,3px)}
+  80%{transform:translate(4px,-2px)}
+}
+.scene.shake{ animation:shake .45s ease; }
+
+/* make #scene-fight a stacking-context anchor */
+#scene-fight{ position:relative; }
+
+/* 1️⃣  ICON WRAPPER  – sits *under* everything else */
+.hearts{                           /* your existing wrapper */
+  position:absolute; inset:0;
+  pointer-events:none;
+  z-index:0;                       /* <<< lower layer       */
+}
+
+/* 2️⃣  FIGHTERS + BUBBLE  – stay above */
+.fighters,
+.bubble{
+  position:relative;               /* create stacking ctx   */
+  z-index:2;                       /* any number > 0 works  */
+}
 
 /*────────────────────────────────────────────────────────────
   3.  PIXEL SPEECH BUBBLE
@@ -317,6 +385,7 @@ html, body {
   margin-top: 15%;
   font-size: clamp(0.9rem, 3vw, 1rem);
   color: var(--plum);
+  width: 68%;
 }
 
 /* CUTE DIAGONAL BOUNCE */
@@ -549,6 +618,7 @@ html, body {
   font-family: "Courier New", monospace;
   text-align: center;
   z-index: 1000;
+ font-size: 11pt;
 }
 
 article.greeting-card {
@@ -575,6 +645,33 @@ article.greeting-card {
 #scene-cake:not(.hidden) {
   justify-content: flex-start;       /* override .scene default center */
   padding-top: clamp(2rem,6vh,4rem); /* dynamic top margin */
+}
+
+
+/* ─── MEMORY PHOTOS: fade-down in order ─── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-22px); }
+  to   { opacity: 1; transform: translateY(0);      }
+}
+.memory-photo {           /* starter state */
+  opacity: 0;
+  transform: translateY(-22px);
+}
+.memory-photo.fade-down {  /* when JS adds this */
+  animation: fadeDown 0.6s ease-out forwards;
+}
+
+/* ─── GREETING CARD: fade-up once photos are in ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.greeting-card {           /* starter state */
+  opacity: 0;
+  transform: translateY(22px);
+}
+.greeting-card.fade-up {   /* when JS adds this */
+  animation: fadeUp 0.7s ease-out forwards;
 }
 
 /*────────────────────────────────────────────────────────────
