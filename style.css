@@ -148,11 +148,11 @@ div#vs-overlay {
     }
 
     .bubble.floating {
-    margin-top: 31%;
+    margin-top: 5%;
 }
 
 div#vs-overlay {
-    margin-top: 25%;
+    margin-top: 20%;
     display:block;
 }
 }
