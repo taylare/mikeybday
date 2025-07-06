@@ -41,11 +41,13 @@ html, body {
 .hero {
   width: clamp(160px, 45vw, 300px);
   height: auto;
+  z-index: 3;
 }
 
 
 .hedgie-offer, .hedgie-sad {
     width: 300px;
+    z-index: 3;
 }
 
 .hedgie {
@@ -120,22 +122,6 @@ DUEL SCENE
 }
 .scene.shake{ animation:shake .45s ease; }
 
-/* make #scene-fight a stacking-context anchor */
-#scene-fight{ position:relative; }
-
-/* 1️⃣  ICON WRAPPER  – sits *under* everything else */
-.hearts{                           /* your existing wrapper */
-  position:absolute; inset:0;
-  pointer-events:none;
-  z-index:0;                       /* <<< lower layer       */
-}
-
-/* 2️⃣  FIGHTERS + BUBBLE  – stay above */
-.fighters,
-.bubble{
-  position:relative;               /* create stacking ctx   */
-  z-index:2;                       /* any number > 0 works  */
-}
 
 /*────────────────────────────────────────────────────────────
   3.  PIXEL SPEECH BUBBLE
@@ -558,7 +544,7 @@ DUEL SCENE
   inset: 0;                     /* full-scene coverage   */
   overflow: hidden;
   pointer-events: none;         /* never block clicks    */
-  z-index: 0;                   /* sits *behind* hedgie & bubble */
+  z-index: 2;                   /* sits *behind* hedgie & bubble */
 }
 
 .heart {                        /* every individual <img> */
@@ -587,7 +573,7 @@ DUEL SCENE
   gap: 1rem;                   /* space between thumbnails */
   margin-block: 1.75rem;       /* breathing room above/-below each row */
   flex-wrap: wrap;             /* let them wrap on XS view */
-  position: static;
+  z-index: -2;
 }
 
 .photo-row img {
@@ -677,17 +663,23 @@ article.greeting-card {
 /*────────────────────────────────────────────────────────────
   6.  HERO  (Tayla, speech bubble, sparkle)
   ────────────────────────────────────────────────────────────*/
+
+/* === Wrapper around Tayla + bubble ======================= */
 .hero-wrap{
-  position: relative;            /* anchor for absolute bubble-box   */
+  position: relative;                 /* anchor for bubble   */
   display: flex;
   justify-content: center;
   align-items: flex-end;
   margin-block: 2rem;
-  pointer-events: none;          /* allow only Tayla to receive clicks */
-  margin-top: 25%;               /* pulls scene down under the card   */
+  margin-top: 25%;                    /* pull scene down     */
+  pointer-events: none;               /* links inside handle clicks */
+  z-index: 3;
+
+  /* delayed-entrance starter state */
+  opacity: 0;                         /* invisible at first  */
 }
 
-/* Tayla link + sprite */
+/* === Tayla link + sprite ================================= */
 .tayla-link{
   display: inline-block;
   pointer-events: auto;
@@ -695,11 +687,11 @@ article.greeting-card {
 }
 .tayla-img{
   width: 180px;
-  opacity: 0;
-  animation: slideInRight 0.9s ease-out forwards;
+  opacity: 0;                         /* hidden until slide  */
+  transform: translateX(120%);        /* wait off-canvas R   */
   transition: filter .25s ease;
 }
-/* Pink glow on hover / focus / active */
+/* pink glow on hover / focus / active */
 .tayla-link:hover  .tayla-img,
 .tayla-link:focus  .tayla-img,
 .tayla-link:active .tayla-img{
@@ -707,30 +699,29 @@ article.greeting-card {
   transform: translateX(0) scale(1.04);
 }
 
-/* Bubble wrapper (gives real dimensions so ::after can align) */
+/* === Bubble wrapper (so ✨ can align correctly) =========== */
 .bubble-box{
   position: absolute;
-  bottom: 100%;                  /* sits above Tayla            */
+  bottom: 100%;                       /* sits above Tayla    */
   left: 50%;
   transform: translateX(-50%);
-  width: 230px;                  /* match PNG width             */
-  display: inline-block;         /* shrink-wrap                 */
+  width: 230px;                       /* match PNG width     */
+  display: inline-block;
   pointer-events: none;
 }
 
-/* Bubble image */
+/* bubble image itself – waits above view */
 .bubble-img{
   width: 100%;
   opacity: 0;
-  animation: slideDown 0.7s ease-out forwards;
-  animation-delay: 1s;
-  z-index: 2;
+  transform: translateY(-120%);       /* off-canvas up       */
+  position: absolute;
   left: 23%;
-  position: absolute; 
   margin-top: -32%;
+  z-index: 2;
 }
 
-/* Sparkle pseudo-element */
+/* sparkle on bubble corner */
 .bubble-box::after{
   content: "✨";
   position: absolute;
@@ -741,7 +732,23 @@ article.greeting-card {
   z-index: 1000;
 }
 
-/* Keyframes */
+/* === Delayed entrance sequence =========================== */
+@keyframes heroFade{ from{opacity:0;} to{opacity:1;} }
+
+.hero-wrap.hero-in{                 /* added by JS after 5 s */
+  animation: heroFade .6s ease-out forwards;
+}
+
+/* once .hero-in is present, run sprite + bubble animations */
+.hero-wrap.hero-in .tayla-img{
+  animation: slideInRight .9s ease-out forwards;
+}
+.hero-wrap.hero-in .bubble-img{
+  animation: slideDown .7s ease-out forwards;
+  animation-delay: .6s;             /* bubble follows sprite */
+}
+
+/* === Re-used keyframes ==================================== */
 @keyframes slideInRight{
   from{ transform: translateX(120%); opacity: 0; }
   to  { transform: translateX(0);     opacity: 1; }

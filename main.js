@@ -148,6 +148,11 @@ function revealSurprise(){
   card.classList.add('fade-up');
   card.style.animationDelay = `${pics.length * 0.25 + 0.2}s`;
 
+    /* make Tayla appear 5 s after the photos drop in */
+    const heroWrap = surprise.querySelector('.hero-wrap');
+    setTimeout(() => heroWrap.classList.add('hero-in'), 4000);
+
+
   /* optional scroll */
   surprise.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
