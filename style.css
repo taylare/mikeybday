@@ -146,7 +146,7 @@ div#vs-overlay {
         animation:vsPop .6s 1.2s forwards ease-out; /* delay 1.2 s */
     }
     .vs-icon{ 
-        width:85px; 
+        width:75px; 
     }
 
     @keyframes vsPop{
@@ -165,12 +165,13 @@ div#vs-overlay {
     }
 
     .health-bars {
-        top: 367px !important;
+        top: 340px !important;
     }
 
     .bubble.floating.duel-bubble {
-    margin-top: -91%;
-}
+        margin-top: -91%;
+        padding: 1%;
+    }
 }
 
 
