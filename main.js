@@ -166,9 +166,9 @@ $('#fight-btn').addEventListener('click', e => {
 
   // After the attack animation finishes, move on with the story
   setTimeout(() => {
-    btn.textContent = 'The hedgehog has won the duel';
+    btn.textContent = 'The hedgehog has won the duel 🤭';
     hedgy.style.transform = '';  // reset back to original position
-    setTimeout(enterCake, 3000); // show cake scene after a pause
+    setTimeout(enterCake, 3500); // show cake scene after a pause
   }, 1100);
 });
 
