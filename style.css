@@ -134,27 +134,29 @@ div#vs-overlay {
 
 
 @media (max-width: 450px) {
-#vs-overlay{
+    #vs-overlay{
         position:absolute; top:4%; left:50%;
         transform:translateX(-50%) translateY(-40%) scale(.4);
         opacity:0;               /* start hidden */
         pointer-events:none;
         animation:vsPop .6s 1.2s forwards ease-out; /* delay 1.2 s */
     }
-.vs-icon{ 
-    width:120px; }
+    .vs-icon{ 
+        width:120px; 
+    }
+
     @keyframes vsPop{
         to{ transform:translateX(-50%) translateY(0) scale(1); opacity:1; }
     }
 
     .bubble.floating {
-    margin-top: 5%;
-}
+        margin-top: 10%;
+    }
 
-div#vs-overlay {
-    margin-top: 20%;
-    display:block;
-}
+    div#vs-overlay {
+        margin-top: 20%;
+        display:block;
+    }
 }
 
 
