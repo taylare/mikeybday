@@ -45,7 +45,7 @@ html, body {
 }
 
 .hero {
-      filter: drop-shadow(0 0 2px rgb(41, 40, 41));
+    filter: drop-shadow(0 0 2px rgb(41, 40, 41));
     transform: translateX(0) scale(1.04);
 }
 
@@ -132,6 +132,10 @@ div#vs-overlay {
     
 }
 
+    .bubble.floating.duel-bubble {
+    margin-top: 1%;
+}
+
 
 @media (max-width: 450px) {
     #vs-overlay{
@@ -142,21 +146,31 @@ div#vs-overlay {
         animation:vsPop .6s 1.2s forwards ease-out; /* delay 1.2 s */
     }
     .vs-icon{ 
-        width:120px; 
+        width:85px; 
     }
 
     @keyframes vsPop{
         to{ transform:translateX(-50%) translateY(0) scale(1); opacity:1; }
     }
 
-    .bubble.floating {
-        margin-top: 10%;
-    }
 
     div#vs-overlay {
-        margin-top: 15%;
+        margin-top: 55%;
         display:block;
     }
+
+    .fighters {
+        top: 132px !important;
+        position: relative;
+    }
+
+    .health-bars {
+        top: 367px !important;
+    }
+
+    .bubble.floating.duel-bubble {
+    margin-top: -91%;
+}
 }
 
 
@@ -325,7 +339,11 @@ div#vs-overlay {
 /*────────────────────────────────────────────────────────────
   4.  CAKE + CANDLES
   ────────────────────────────────────────────────────────────*/
-#cake-wrapper { display: flex; flex-direction: column; align-items: center; }
+#cake-wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;  
+}
 
 .cake {
   position: relative;
@@ -338,6 +356,8 @@ div#vs-overlay {
   width: 100%;
   height: auto;
   display: block;
+  filter: drop-shadow(0 0 1px rgb(41, 40, 41));
+  transform: translateX(0) scale(1.04);
 }
 
 .candles {
@@ -800,3 +820,51 @@ article.greeting-card {
   0%,100%{ opacity: 0; transform: scale(.7) rotate(-15deg); }
   50%    { opacity: 1; transform: scale(1)  rotate( 5deg); }
 }
+
+
+/*────────────────────────────────────────────────────────────
+  HEALTH BARS
+  ────────────────────────────────────────────────────────────*/
+.health-bars{
+  position:absolute;
+  top:14px; left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:1.8rem;
+  z-index:10;               /* above fighters & bubble */
+  font-family:"Courier New",monospace;
+}
+
+/* one “card” per fighter */
+.hp{ text-align:center; font-size:.75rem; line-height:1; }
+
+/* the white “container” with chunky pixel border */
+.hp-bar{
+  position:relative;
+  width:140px; height:14px;
+  background:#fff;
+  border:4px solid #000;
+  clip-path: polygon(0px calc(100% - 6px),
+                     6px calc(100% - 6px),
+                     6px 100%,
+                     calc(100% - 6px) 100%,
+                     calc(100% - 6px) calc(100% - 6px),
+                     100% calc(100% - 6px),
+                     100% 6px,
+                     calc(100% - 6px) 6px,
+                     calc(100% - 6px) 0,
+                     6px 0,
+                     6px 6px,
+                     0 6px);
+  overflow:hidden;          /* hides fill overflow */
+}
+
+/* coloured “fill” that shrinks as HP drops */
+.hp-fill{
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  transition:width .5s linear;              /* smooth drain */
+  background:#e74c3c;                      /* Mike = red    */
+}
+
+.hp-hedgie .hp-fill{ background:#39b54a; }  /* Hedgie = green */
