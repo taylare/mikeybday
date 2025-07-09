@@ -38,13 +38,13 @@ html, body {
   2.  CHARACTER SPRITES
   ────────────────────────────────────────────────────────────*/
 .hedgie,
-.hero {
+.mike {
   width: clamp(160px, 45vw, 300px);
   height: auto;
   z-index: 3;
 }
 
-.hero {
+.mike {
     filter: drop-shadow(0 0 2px rgb(41, 40, 41));
     transform: translateX(0) scale(1.04);
 }
@@ -62,7 +62,7 @@ html, body {
 /* Extra-small phones: shrink even more so they don’t stack awkwardly */
 @media (max-width: 450px) {
   .hedgie {width: 90px; }
-  .hero { width: 195px; }
+  .mike { width: 195px; }
 
   .hedgie-offer, .hedgie-sad {
     width: 200px;
@@ -75,7 +75,7 @@ html, body {
   50%  { filter: hue-rotate(-40deg) brightness(1.6); }
   100% { filter: hue-rotate(0deg)   brightness(1); }
 }
-.hero.hurt { animation: hurt 0.5s ease; }
+.mike.hurt { animation: hurt 0.5s ease; }
 
 /*----------------------------------------------------
 DUEL SCENE 

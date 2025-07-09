@@ -136,19 +136,19 @@ $('#sad-no').addEventListener('click', () => {
    ------------------------------------------------------------------ */
 $('#fight-btn').addEventListener('click', e => {
   const btn   = e.currentTarget;
-  const hero  = $('#scene-fight .hero');
+  const mike  = $('#scene-fight .mike');
   const hedgy = $('#scene-fight .hedgie');
 
   // Disable the button so it cannot be clicked twice
   btn.disabled = true;
   btn.textContent = '…duelling';
 
-  // Hedgehog charges left toward the hero
+  // Hedgehog charges left toward mike
   hedgy.style.transition = 'transform .6s ease';
   hedgy.style.transform  = 'translateX(-135%)';
 
-  // Hero flashes red after a short delay
-  setTimeout(() => hero.classList.add('hurt'), 600);
+  // mike flashes red after a short delay
+  setTimeout(() => mike.classList.add('hurt'), 600);
 
   // Camera shake effect
   $('#scene-fight').classList.add('shake');
