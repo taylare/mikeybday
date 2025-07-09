@@ -1,5 +1,5 @@
 /*************************************************************************
- * Birthday Hedgehog – main.js  (beginner-commented edition, no-emoji comments)
+ * 
  *
  * FILE OVERVIEW
  * -------------
