@@ -157,10 +157,10 @@ $('#fight-btn').addEventListener('click', e => {
   // Drain Mike's health bar smoothly over about 0.6 seconds
   const drain = setInterval(() => {
     if (mikeHP > 0) {
-      mikeHP -= 2;      // decrease by 4 points every 25 ms
+      mikeHP -= 2;      // decrease by 2 points every 25 ms
       drawHP();
     } else {
-      clearInterval(drain);  // stop once we hit zero
+      clearInterval(drain);  // stop once hit zero
     }
   }, 25);
 
@@ -168,7 +168,7 @@ $('#fight-btn').addEventListener('click', e => {
   setTimeout(() => {
     btn.textContent = 'The hedgehog has won the duel 🤭';
     hedgy.style.transform = '';  // reset back to original position
-    setTimeout(showLoadingThenCake, 3500); // ⬅️ switch to loading screen
+    setTimeout(showLoadingThenCake, 4000); // switch to loading screen
   }, 1100);
 });
 
@@ -182,7 +182,7 @@ $('#fight-btn').addEventListener('click', e => {
 function showLoadingThenCake () {
   fadeStopDuel();              // stop music
   show('#scene-loading');      // show loading screen
-  setTimeout(enterCake, 6000); // after 6s, move to cake scene
+  setTimeout(enterCake, 6500); // after 6s, move to cake scene
 }
 
 
@@ -263,7 +263,7 @@ function startMicOnce () {
         cakeMsg.textContent = '🥳🥳🥳🥳🥳🥳';
         stream.getTracks().forEach(t => t.stop()); // stop mic
         ctx.close();                               // free resources
-        setTimeout(revealSurprise, 2000);           // move on
+        setTimeout(revealSurprise, 2500);           // move on
       }
     })
     .catch(err => {
