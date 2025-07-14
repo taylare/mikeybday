@@ -182,7 +182,7 @@ $('#fight-btn').addEventListener('click', e => {
 function showLoadingThenCake () {
   fadeStopDuel();              // stop music
   show('#scene-loading');      // show loading screen
-  setTimeout(enterCake, 6500); // after 6s, move to cake scene
+  setTimeout(enterCake, 6000); // after 6s, move to cake scene
 }
 
 
