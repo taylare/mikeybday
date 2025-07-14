@@ -10,8 +10,7 @@
  * 5.  Microphone access so the player can blow out the cake candles.
  * 6.  Surprise photo / greeting-card reveal after the candles go out.
  * 7.  Floating hearts and balloons just for decoration.
- *
-
+ * 8.  Cute loading screen after duel (NEW!)
  *************************************************************************/
 
 
@@ -141,11 +140,12 @@ $('#fight-btn').addEventListener('click', e => {
 
   // Disable the button so it cannot be clicked twice
   btn.disabled = true;
+  btn.style = 'text-decoration: none; border: none; background-color: white;';
   btn.textContent = '…duelling';
 
   // Hedgehog charges left toward mike
-  hedgy.style.transition = 'transform .6s ease';
-  hedgy.style.transform  = 'translateX(-135%)';
+  hedgy.style.transition = 'transform .7s ease';
+  hedgy.style.transform  = 'translateX(-136%)';
 
   // mike flashes red after a short delay
   setTimeout(() => mike.classList.add('hurt'), 600);
@@ -157,7 +157,7 @@ $('#fight-btn').addEventListener('click', e => {
   // Drain Mike's health bar smoothly over about 0.6 seconds
   const drain = setInterval(() => {
     if (mikeHP > 0) {
-      mikeHP -= 4;      // decrease by 4 points every 25 ms
+      mikeHP -= 2;      // decrease by 4 points every 25 ms
       drawHP();
     } else {
       clearInterval(drain);  // stop once we hit zero
@@ -168,9 +168,22 @@ $('#fight-btn').addEventListener('click', e => {
   setTimeout(() => {
     btn.textContent = 'The hedgehog has won the duel 🤭';
     hedgy.style.transform = '';  // reset back to original position
-    setTimeout(enterCake, 3500); // show cake scene after a pause
+    setTimeout(showLoadingThenCake, 3500); // ⬅️ switch to loading screen
   }, 1100);
 });
+
+
+/* ─────────────────────────────────────────────────────────────
+   6.5.  LOADING SCREEN AFTER DUEL (NEW!)
+   ------------------------------------------------------------------
+   Brief pause between the duel and cake scene, with floating cakes
+   and a cute message: “Getting the cake ready…”
+   ------------------------------------------------------------------ */
+function showLoadingThenCake () {
+  fadeStopDuel();              // stop music
+  show('#scene-loading');      // show loading screen
+  setTimeout(enterCake, 6000); // after 6s, move to cake scene
+}
 
 
 /* ─────────────────────────────────────────────────────────────
@@ -205,7 +218,7 @@ function startMicOnce () {
   // Ask the user for permission
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(async stream => {
-      // Create an audio context so we can inspect sound levels
+      // Create an audio context to inspect sound levels
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       if (ctx.state === 'suspended') {
         try { await ctx.resume(); } catch {}
@@ -217,7 +230,7 @@ function startMicOnce () {
       ana.fftSize = 256;
       mic.connect(ana);
 
-      // We will check root-mean-square volume every frame
+      // check root-mean-square volume every frame
       const data = new Uint8Array(ana.frequencyBinCount);
       let loudFrames = 0;           // how many frames in a row are loud?
       const THRESH = 0.15;          // sound level to count as "blow"
@@ -247,10 +260,10 @@ function startMicOnce () {
       // Called when the player finally blows hard enough
       function extinguish () {
         flames.forEach(f => f.classList.add('blown-out'));
-        cakeMsg.textContent = 'Candles out!';
+        cakeMsg.textContent = '🥳🥳🥳🥳🥳🥳';
         stream.getTracks().forEach(t => t.stop()); // stop mic
         ctx.close();                               // free resources
-        setTimeout(revealSurprise, 600);           // move on
+        setTimeout(revealSurprise, 2000);           // move on
       }
     })
     .catch(err => {

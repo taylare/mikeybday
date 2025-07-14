@@ -136,6 +136,18 @@ div#vs-overlay {
     margin-top: 1%;
 }
 
+button#fight-btn {
+    border: solid;
+    border-radius: 5px;
+    padding: 2px;
+    background-color: lightgrey;
+    text-decoration: none;
+}
+
+button#fight-btn:active {
+ background-color: yellow;
+}
+
 
 @media (max-width: 450px) {
     #vs-overlay{
@@ -880,4 +892,41 @@ article.greeting-card {
     width: 102%;
   }
 
+}
+
+
+/* 🍰 LOADING SCENE STYLING */
+#scene-loading .loading-text {
+  font-family: "Courier New", monospace;
+  font-size: 1.25rem;
+  animation: bounceText 1.2s ease-in-out infinite;
+  color: var(--plum);
+  margin-bottom: 2rem;
+}
+
+@keyframes bounceText {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.cake-floaters {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.cake-icon {
+  width: 60px;
+  animation: floatCake 2.5s linear infinite;
+  opacity: 0.85;
+}
+
+.delay-1 { animation-delay: 0.4s; }
+.delay-2 { animation-delay: 0.8s; }
+.delay-3 { animation-delay: 0.12s; }
+
+@keyframes floatCake {
+  0%   { transform: translateY(0); opacity: 1; }
+  50%  { transform: translateY(-20px); opacity: 0.6; }
+  100% { transform: translateY(0); opacity: 1; }
 }
