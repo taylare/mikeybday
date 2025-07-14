@@ -869,3 +869,15 @@ article.greeting-card {
 }
 
 .hp-hedgie .hp-fill{ background:#39b54a; }  /* Hedgie = green */
+
+@media only screen 
+  and (device-width: 375px) 
+  and (device-height: 812px) 
+  and (-webkit-device-pixel-ratio: 3)
+  and (orientation: portrait) {
+  
+  .photo-row {
+    width: 102%;
+  }
+
+}
