@@ -167,6 +167,7 @@ $('#fight-btn').addEventListener('click', e => {
   // After the attack animation finishes, move on with the story
   setTimeout(() => {
     btn.textContent = 'The hedgehog has won the duel 🤭';
+    btn.style.color = 'red';
     hedgy.style.transform = '';  // reset back to original position
     setTimeout(showLoadingThenCake, 4000); // switch to loading screen
   }, 1100);
