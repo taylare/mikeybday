@@ -177,7 +177,7 @@ button#fight-btn:active {
     }
 
     .health-bars {
-        top: 313px !important;
+        top: 350px !important;
     }
 
     .bubble.floating.duel-bubble {
@@ -660,7 +660,7 @@ button#fight-btn:active {
 }
 
 .photo-row.top-photos {
-    margin-top: 5%;
+    margin-top: 6%;
 }
 
 /* ──────────────────────────────────────────────────────────
