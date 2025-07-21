@@ -10,7 +10,7 @@
  * 5.  Microphone access so the player can blow out the cake candles.
  * 6.  Surprise photo / greeting-card reveal after the candles go out.
  * 7.  Floating hearts and balloons just for decoration.
- * 8.  Cute loading screen after duel (NEW!)
+ * 8.  Cute loading screen after duel 
  *************************************************************************/
 
 
@@ -175,7 +175,7 @@ $('#fight-btn').addEventListener('click', e => {
 
 
 /* ─────────────────────────────────────────────────────────────
-   6.5.  LOADING SCREEN AFTER DUEL (NEW!)
+   6.5.  LOADING SCREEN AFTER DUEL
    ------------------------------------------------------------------
    Brief pause between the duel and cake scene, with floating cakes
    and a cute message: “Getting the cake ready…”
@@ -204,74 +204,96 @@ function enterCake () {
    and extinguishes the candle flames when detected.
 */
 function startMicOnce () {
+  // prevent this function from running multiple times
   if (micStarted) return;
   micStarted = true;
 
+  // select all candle elements (used later to show they're blown out)
   const flames   = $$('.candle');
+  // select the message area inside the cake wrapper
   const cakeMsg  = $('#cake-wrapper .msg');
 
-  // Check if the browser even supports microphone access
+  // check if the browser supports microphone access
   if (!navigator.mediaDevices) {
     cakeMsg.textContent = 'Mic unavailable (HTTPS required)';
     return;
   }
 
-  // Ask the user for permission
+  // ask the user for access to the microphone
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(async stream => {
-      // Create an audio context to inspect sound levels
+      // create an audio context to analyse sound input
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // resume the audio context if it's suspended (some browsers require interaction first)
       if (ctx.state === 'suspended') {
         try { await ctx.resume(); } catch {}
       }
 
-      // Wire up analyser: mic -> analyser -> (no output)
+      // connect the microphone to an audio analyser
       const mic = ctx.createMediaStreamSource(stream);
       const ana = ctx.createAnalyser();
-      ana.fftSize = 256;
-      mic.connect(ana);
+      ana.fftSize = 256; // the size of the data sample for analysis
+      mic.connect(ana);  // link microphone input to the analyser
 
-      // check root-mean-square volume every frame
+      // create an array to hold the sound waveform data
       const data = new Uint8Array(ana.frequencyBinCount);
-      let loudFrames = 0;           // how many frames in a row are loud?
-      const THRESH = 0.15;          // sound level to count as "blow"
-      const NEED   = 4;             // number of loud frames required
 
+      let loudFrames = 0;   // how many frames in a row have loud volume?
+      const THRESH = 0.15;  // volume threshold to count as a "blow"
+      const NEED   = 4;     // how many loud frames in a row are needed to trigger the candles?
+
+      // begin looping every animation frame to check mic volume
       (function loop () {
+        // fill the data array with time-domain (waveform) values from the mic
         ana.getByteTimeDomainData(data);
 
-        // Calculate volume as RMS (root-mean-square)
+        // calculate RMS (root-mean-square) to measure loudness
         let sum = 0;
         data.forEach(v => {
-          const n = (v - 128) / 128; // normalize to range -1 … +1
-          sum += n * n;
+          const n = (v - 128) / 128; // convert value from 0–255 to -1 to +1 range
+          sum += n * n;              // square and sum the values
         });
-        const rms = Math.sqrt(sum / data.length);
+        const rms = Math.sqrt(sum / data.length); // get final RMS volume
 
-        // Loud enough?
+        // If the sound is loud enough...
         if (rms > THRESH) {
-          if (++loudFrames >= NEED) extinguish(); // succeed
-          else requestAnimationFrame(loop);       // keep testing
+          loudFrames++; // count this as a loud frame
+
+          if (loudFrames >= NEED) {
+            extinguish(); // ff enough loud frames in a row, blow out the candles
+          } else {
+            requestAnimationFrame(loop); // keep checking in next frame
+          }
         } else {
-          loudFrames = 0;                         // reset counter
-          requestAnimationFrame(loop);
+          loudFrames = 0; // not loud enough, reset the loud frame counter
+          requestAnimationFrame(loop); // keep checking
         }
       })();
 
-      // Called when the player finally blows hard enough
+      // function to run once candles are successfully "blown out"
       function extinguish () {
+        // Add 'blown-out' class to each candle flame to visually turn them off
         flames.forEach(f => f.classList.add('blown-out'));
+
+        // update the message to show celebration emojis
         cakeMsg.textContent = '🥳🥳🥳🥳🥳🥳';
-        stream.getTracks().forEach(t => t.stop()); // stop mic
-        ctx.close();                               // free resources
-        setTimeout(revealSurprise, 2500);           // move on
+
+        // stop microphone input to free up system resources
+        stream.getTracks().forEach(t => t.stop());
+        ctx.close(); // close the audio context
+
+        // after a short delay, reveal the next surprise 
+        setTimeout(revealSurprise, 2500);
       }
     })
     .catch(err => {
+      // handle error if mic access is denied or unavailable
       console.error('Mic error', err);
       cakeMsg.textContent = 'Enable the microphone in your browser bar';
     });
 }
+
 
 
 /* ─────────────────────────────────────────────────────────────
